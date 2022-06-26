@@ -2,14 +2,33 @@
 
 pragma solidity ^0.8.15;
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+// import upgradeable version of the ERC20 contract
+import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
+// import Ownable upgradeable so only the contract owner can run admin actions on the contract
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+// import the open the Proxy contract
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
-contract VirtualitoTKN is ERC20 {
-    constructor(string memory name, string memory symbol) ERC20(name, symbol) {
-        _mint(msg.sender, 100000 * (10**decimals()));
+contract VirtualitoTKN is
+    ERC20Upgradeable,
+    UUPSUpgradeable,
+    OwnableUpgradeable
+{
+    // using an initializer instead of a contructor
+    function initialize(uint256 initialSupply) public initializer {
+        // As we are not using constructors we have to use the ERC20's contract initializer as well
+        __ERC20_init("VirtualitoTKN", "VTN");
+        // init the ownable contract and proxy
+        __Ownable_init_unchained();
+        __UUPSUpgradeable_init();
+        // mint an initial amount of tokens
+        _mint(msg.sender, initialSupply * (10**decimals()));
     }
 
-    function decimals() public pure override returns (uint8) {
-        return 6;
-    }
+    // Override this function required for the proxy to work
+    function _authorizeUpgrade(address newImplementation)
+        internal
+        override
+        onlyOwner
+    {}
 }
