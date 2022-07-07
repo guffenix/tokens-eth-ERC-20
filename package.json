@@ -13,7 +13,7 @@
     "tokens"
   ],
   "author": "Luis Fernando Ushiña",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.6",
     "@nomiclabs/hardhat-waffle": "^2.0.3",
